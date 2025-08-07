@@ -1,8 +1,11 @@
 package com.example.jwt.user;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +16,6 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
 
-    /*
     @PostMapping
     public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserCreationDto userCreationDto) {
         var userDto = userService.createUser(userCreationDto);
@@ -22,6 +24,7 @@ public class UserController {
                 .body(userDto);
     }
 
+    /*
     @GetMapping("/{id}")
     public UserDto getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
