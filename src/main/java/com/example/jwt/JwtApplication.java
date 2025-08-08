@@ -1,11 +1,13 @@
 package com.example.jwt;
 
 import com.example.jwt.auth.AuthUser;
+import com.example.jwt.util.JwtConfiguration;
+import com.example.jwt.util.JwtIssuer;
 import com.example.jwt.user.UserRepository;
-import com.nimbusds.jose.jwk.source.ImmutableSecret;
-import org.springframework.beans.factory.annotation.Value;
+import com.example.jwt.util.JwtProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,14 +22,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import javax.crypto.spec.SecretKeySpec;
-
 @SpringBootApplication
+@EnableConfigurationProperties(JwtProperties.class)
 public class JwtApplication {
 
     public static void main(String[] args) {
@@ -75,14 +73,20 @@ public class JwtApplication {
     }
 
     @Bean
-    public JwtDecoder jwtDecoder(@Value("${jwt.secret}") String jwtSecret) {
-        var secretKey = new SecretKeySpec(jwtSecret.getBytes(), "HmacSHA256"); // здесь алгоритм ни на что не влияет
-        return NimbusJwtDecoder.withSecretKey(secretKey).build();
+    public JwtDecoder jwtDecoder(JwtConfiguration jwtConfiguration) {
+        return jwtConfiguration.getDecoder();
     }
 
     @Bean
-    public JwtEncoder jwtEncoder(@Value("${jwt.secret}") String jwtSecret) {
-        var jwkSource = new ImmutableSecret<>(jwtSecret.getBytes());
-        return new NimbusJwtEncoder(jwkSource);
+    public JwtIssuer jwtIssuer(JwtConfiguration jwtConfiguration) {
+        return jwtConfiguration.getIssuer();
+    }
+
+    @Bean
+    public JwtConfiguration jwtConfiguration(JwtProperties properties) {
+        return JwtConfiguration.withSecret(properties.secret())
+                .algorithm(properties.algorithm())
+                .lifetime(properties.lifetime())
+                .build();
     }
 }
