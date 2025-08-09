@@ -25,12 +25,6 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
-    public UserDto getUserById(Long id) {
-        return userRepository.findById(id)
-                .map(userMapper::toDto)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-    }
-
     public UserDto getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .map(userMapper::toDto)

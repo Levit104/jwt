@@ -65,7 +65,8 @@ public class JwtApplication {
 
     @Bean
     public AuthenticationManager authenticationManager(
-            UserDetailsService userDetailsService, PasswordEncoder passwordEncoder
+            UserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder
     ) {
         var authenticationProvider = new DaoAuthenticationProvider(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder);
@@ -83,10 +84,10 @@ public class JwtApplication {
     }
 
     @Bean
-    public JwtConfiguration jwtConfiguration(JwtProperties properties) {
-        return JwtConfiguration.withSecret(properties.secret())
-                .algorithm(properties.algorithm())
-                .lifetime(properties.lifetime())
+    public JwtConfiguration jwtConfiguration(JwtProperties jwtProperties) {
+        return JwtConfiguration.withSecret(jwtProperties.secret())
+                .algorithm(jwtProperties.algorithm())
+                .lifetime(jwtProperties.lifetime())
                 .build();
     }
 }

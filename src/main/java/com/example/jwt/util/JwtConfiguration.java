@@ -53,10 +53,7 @@ public class JwtConfiguration {
 
         public SecretJwtConfigurationBuilder algorithm(String algorithm) {
             Assert.notNull(algorithm, "algorithm cannot be null");
-            var parsedAlgorithm = MacAlgorithm.from(algorithm);
-            Assert.notNull(parsedAlgorithm, "invalid algorithm");
-            this.algorithm = parsedAlgorithm;
-            return this;
+            return this.algorithm(MacAlgorithm.from(algorithm));
         }
 
         public SecretJwtConfigurationBuilder lifetime(Duration lifetime) {
@@ -105,10 +102,7 @@ public class JwtConfiguration {
 
         public RSAKeysJwtConfigurationBuilder algorithm(String algorithm) {
             Assert.notNull(algorithm, "algorithm cannot be null");
-            var parsedAlgorithm = SignatureAlgorithm.from(algorithm);
-            Assert.notNull(parsedAlgorithm, "invalid algorithm");
-            this.algorithm = parsedAlgorithm;
-            return this;
+            return this.algorithm(SignatureAlgorithm.from(algorithm));
         }
 
         public RSAKeysJwtConfigurationBuilder lifetime(Duration lifetime) {

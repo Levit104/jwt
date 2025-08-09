@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jose.jws.JwsAlgorithm;
-import org.springframework.security.oauth2.jwt.JwsHeader;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.*;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -19,26 +16,23 @@ public class DefaultJwtIssuer implements JwtIssuer {
     private final Duration lifetime;
 
     @Override
-    public String issueToken(Authentication authentication) {
+    public Jwt issueToken(Authentication authentication) {
+        var header = JwsHeader.with(algorithm).type("JWT").build();
+
         var now = Instant.now();
 
-        var scope = authentication.getAuthorities()
+        var authorities = authentication.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        var header = JwsHeader.with(algorithm).type("JWT").build();
-
         var claims = JwtClaimsSet.builder()
-                .issuer("self")
+                .subject(authentication.getName())
                 .issuedAt(now)
                 .expiresAt(now.plus(lifetime))
-                .subject(authentication.getName())
-                .claim("scope", scope)
+                .claim("scp", authorities)
                 .build();
 
-        var jwt = encoder.encode(JwtEncoderParameters.from(header, claims));
-
-        return jwt.getTokenValue();
+        return encoder.encode(JwtEncoderParameters.from(header, claims));
     }
 }

@@ -3,12 +3,11 @@ package com.example.jwt.user;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -24,13 +23,6 @@ public class UserController {
                 .body(userDto);
     }
 
-    /*
-    @GetMapping("/{id}")
-    public UserDto getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
-    }
-     */
-
     @GetMapping("/{username}")
     public UserDto getUserByUsername(@PathVariable String username) {
         return userService.getUserByUsername(username);
@@ -42,10 +34,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public Map<String, Object> getMe(Authentication authentication) {
-        return Map.of(
-                "username", authentication.getName(),
-                "authorities", authentication.getAuthorities()
-        );
+    public UserDto getMe(Principal principal) {
+        return userService.getUserByUsername(principal.getName());
     }
 }

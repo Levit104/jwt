@@ -14,10 +14,11 @@ public class AuthService {
 
     public AuthResponseDto signIn(AuthRequestDto authRequestDto) {
         var authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authRequestDto.username(), authRequestDto.password())
+                UsernamePasswordAuthenticationToken.unauthenticated(authRequestDto.username(), authRequestDto.password())
         );
 
-        var token = jwtIssuer.issueToken(authentication);
-        return new AuthResponseDto(token);
+        var jwt = jwtIssuer.issueToken(authentication);
+
+        return new AuthResponseDto(jwt.getTokenValue());
     }
 }
