@@ -1,6 +1,9 @@
 package com.example.jwt.auth;
 
+import java.time.Instant;
+
 public record AuthResponseDto(
-        String token
+        String token,
+        Instant expiresAt
 ) {
 }

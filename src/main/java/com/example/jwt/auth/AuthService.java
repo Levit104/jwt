@@ -19,6 +19,6 @@ public class AuthService {
 
         var jwt = jwtIssuer.issueToken(authentication);
 
-        return new AuthResponseDto(jwt.getTokenValue());
+        return new AuthResponseDto(jwt.getTokenValue(), jwt.getExpiresAt());
     }
 }
